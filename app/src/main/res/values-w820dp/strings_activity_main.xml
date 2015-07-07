@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lblHome">Ecran d\'accueil</string>
+    <string name="lblProfileInformations">Ecran de modification des informations du profil</string>
+    <string name="lblProfilePreferences">Ecran de modification des préférences du profil</string>
+</resources>

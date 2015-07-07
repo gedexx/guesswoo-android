@@ -1,0 +1,15 @@
+<resources>
+    <string name="title_activity_main">GW - Accueil</string>
+
+    <string name="title_home">Accueil</string>
+    <string name="title_profile_informations">Informations du profil</string>
+    <string name="title_profile_preferences">Préférences</string>
+
+    <string name="navigation_drawer_open">Ouvrir le volet de navigation</string>
+    <string name="navigation_drawer_close">Fermer le volet de navigation</string>
+
+    <string name="action_settings">Réglages</string>
+    <string name="lblHome">Ecran d\'accueil</string>
+    <string name="lblProfileInformations">Ecran de modification des informations du profil</string>
+    <string name="lblProfilePreferences">Ecran de modification des préférences du profil</string>
+</resources>

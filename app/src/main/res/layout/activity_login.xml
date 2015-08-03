@@ -9,9 +9,36 @@
               android:paddingRight="@dimen/activity_horizontal_margin"
               android:paddingTop="@dimen/activity_vertical_margin"
               android:weightSum="1"
-              tools:context=".LoginActivity">
+              tools:context=".LoginActivity"
+              android:background="#fffafafa">
 
     <!-- Login progress -->
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.50">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/lbl_guess_woo"
+            android:id="@+id/tvLblGuessWoo"
+            android:textColor="#ff791a4c"
+            android:layout_gravity="center_vertical"
+            android:textSize="50sp"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/ivGuessWoo"
+            android:src="@drawable/logo"
+            android:contentDescription="@string/descGuessWooLogo"
+            android:layout_gravity="center_vertical"/>
+    </LinearLayout>
+
     <ProgressBar
         android:id="@+id/login_progress"
         style="?android:attr/progressBarStyleLarge"
@@ -20,60 +47,53 @@
         android:layout_marginBottom="8dp"
         android:visibility="gone"/>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <ImageView
-            android:id="@+id/gw_icon"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            android:src="@drawable/gw_poc_icon"/>
-
-    </FrameLayout>
-
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"
-        android:layout_height="350dp">
+        android:layout_height="232dp"
+        android:background="#fffafafa">
 
         <LinearLayout
             android:id="@+id/email_login_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            >
 
             <AutoCompleteTextView
                 android:id="@+id/email"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:hint="@string/prompt_email"
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
-                android:singleLine="true"/>
+                android:singleLine="true"
+                android:layout_weight="1"/>
 
             <EditText
                 android:id="@+id/password"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:hint="@string/prompt_password"
                 android:imeActionId="@+id/login"
                 android:imeActionLabel="@string/action_sign_in_short"
                 android:imeOptions="actionUnspecified"
                 android:inputType="textPassword"
                 android:maxLines="1"
-                android:singleLine="true"/>
+                android:singleLine="true"
+                android:layout_weight="1"/>
 
             <Button
                 android:id="@+id/email_sign_in_button"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/action_sign_in"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:background="#ff791a4c"
+                android:textColor="#fffafafa"
+                android:layout_weight="1"/>
 
         </LinearLayout>
     </ScrollView>

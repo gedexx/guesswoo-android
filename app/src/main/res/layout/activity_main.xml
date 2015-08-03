@@ -4,7 +4,7 @@
                                         android:id="@+id/drawer_layout"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        tools:context="com.gw.gw.MainActivity">
+                                        tools:context="com.guesswoo.android.MainActivity">
 
     <FrameLayout
         android:id="@+id/container"
@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/navigation_drawer"
-        android:name="com.gw.gw.NavigationDrawerFragment"
+        android:name="com.guesswoo.android.NavigationDrawerFragment"
         android:layout_width="@dimen/navigation_drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
@@ -21,7 +21,7 @@
 
     <fragment
         android:id="@+id/notification_drawer"
-        android:name="com.gw.gw.NotificationDrawerFragment_"
+        android:name="com.guesswoo.android.NotificationDrawerFragment_"
         android:layout_width="@dimen/navigation_drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="end"

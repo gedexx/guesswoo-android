@@ -1,5 +1,7 @@
 <resources>
-    <string name="title_activity_main">GW - Accueil</string>
+
+    <!-- Libellés de l'écran principal -->
+    <string name="title_activity_main">Accueil</string>
 
     <string name="title_home">Accueil</string>
     <string name="title_profile_informations">Informations du profil</string>

@@ -1,4 +1,4 @@
-package com.gw.gw;
+package com.gw.android;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

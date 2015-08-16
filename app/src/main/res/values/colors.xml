@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="guess_woo_white">#fffafafa</color>
+    <color name="guess_woo_purple">#ff791a4c</color>
+    <color name="guess_woo_light_grey">#ffbebebe</color>
+</resources>

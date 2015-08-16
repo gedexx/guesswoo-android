@@ -1,8 +1,10 @@
-package com.guesswoo.android;
+package com.guesswoo.android.activity;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
+
+import com.guesswoo.android.R;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;

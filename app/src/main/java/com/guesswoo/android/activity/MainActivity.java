@@ -1,17 +1,19 @@
-package com.guesswoo.android;
+package com.guesswoo.android.activity;
 
-import android.app.Activity;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
-import android.view.LayoutInflater;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
+
+import com.guesswoo.android.R;
+import com.guesswoo.android.fragment.MainFragment_;
+import com.guesswoo.android.fragment.NavigationDrawerFragment;
+import com.guesswoo.android.fragment.NotificationDrawerFragment;
+import com.guesswoo.android.fragment.ProfileInformationsFragment_;
+import com.guesswoo.android.fragment.ProfilePreferencesFragment_;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -22,7 +24,7 @@ import org.androidannotations.annotations.ViewById;
  * Ecran présentant les fonctionnalités principales de l'application
  */
 @EActivity(R.layout.activity_main)
-public class MainActivity extends ActionBarActivity
+public class MainActivity extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks, NotificationDrawerFragment
         .OnFragmentInteractionListener {
 
@@ -62,20 +64,38 @@ public class MainActivity extends ActionBarActivity
     public void onNavigationDrawerItemSelected(int position) {
         // Permet de mettre à jour le fragment à afficher en fonction de l'item choisi dans le fragment de navigation
         FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment;
+
+        switch (position) {
+            default:
+            case 0:
+                fragment = new MainFragment_();
+                break;
+            case 1:
+                fragment = new ProfileInformationsFragment_();
+                break;
+            case 2:
+                fragment = new ProfilePreferencesFragment_();
+                break;
+        }
+
         fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                .replace(R.id.container, fragment)
                 .commit();
+
+        onSectionAttached(position);
     }
 
     public void onSectionAttached(int number) {
         switch (number) {
-            case 1:
+            default:
+            case 0:
                 mTitle = getString(R.string.title_home);
                 break;
-            case 2:
+            case 1:
                 mTitle = getString(R.string.title_profile_informations);
                 break;
-            case 3:
+            case 2:
                 mTitle = getString(R.string.title_profile_preferences);
                 break;
         }
@@ -94,7 +114,7 @@ public class MainActivity extends ActionBarActivity
         if (!mNavigationDrawerFragment.isDrawerOpen()) {
             // Permet de gérer les éléments à afficher dans la barre de menu (les 3 petits points en haut à droite de
             // l'écran) en fonction de l'ouverture ou non du fragment de navigation
-            getMenuInflater().inflate(R.menu.main, menu);
+            getMenuInflater().inflate(R.menu.menu_main, menu);
             restoreActionBar();
             return true;
         }
@@ -122,54 +142,4 @@ public class MainActivity extends ActionBarActivity
     public void onFragmentInteraction(String id) {
 
     }
-
-    /**
-     * Fragment substituable : concrètement, c'est un fragment que l'on va insérer dans le layout de l'activité (ou
-     * retirer) en fonction de l'élément cliqué dans le fragment de navigation
-     */
-    public static class PlaceholderFragment extends Fragment {
-
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-
-            View rootView;
-            switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
-                case 1:
-                    rootView = inflater.inflate(R.layout.fragment_main, container, false);
-                    break;
-                case 2:
-                    rootView = inflater.inflate(R.layout.fragment_profile_informations, container, false);
-                    break;
-                case 3:
-                    rootView = inflater.inflate(R.layout.fragment_profile_preferences, container, false);
-                    break;
-                default:
-                    rootView = null;
-            }
-
-            return rootView;
-        }
-
-        @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
-            ((MainActivity) activity).onSectionAttached(
-                    getArguments().getInt(ARG_SECTION_NUMBER));
-        }
-    }
-
 }

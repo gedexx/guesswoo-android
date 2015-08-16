@@ -10,7 +10,7 @@
               android:paddingTop="@dimen/activity_vertical_margin"
               android:weightSum="1"
               tools:context=".LoginActivity"
-              android:background="#fffafafa">
+              android:background="@color/guess_woo_white">
 
     <!-- Login progress -->
 
@@ -26,7 +26,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/lbl_guess_woo"
             android:id="@+id/tvLblGuessWoo"
-            android:textColor="#ff791a4c"
+            android:textColor="@color/guess_woo_purple"
             android:layout_gravity="center_vertical"
             android:textSize="50sp"/>
 
@@ -51,7 +51,7 @@
         android:id="@+id/login_form"
         android:layout_width="match_parent"
         android:layout_height="232dp"
-        android:background="#fffafafa">
+        android:background="@color/guess_woo_white">
 
         <LinearLayout
             android:id="@+id/email_login_form"
@@ -91,8 +91,8 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/action_sign_in"
                 android:textStyle="bold"
-                android:background="#ff791a4c"
-                android:textColor="#fffafafa"
+                android:background="@color/guess_woo_purple"
+                android:textColor="@color/guess_woo_white"
                 android:layout_weight="1"/>
 
         </LinearLayout>

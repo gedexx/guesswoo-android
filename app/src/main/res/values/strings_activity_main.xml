@@ -3,15 +3,21 @@
     <!-- Libellés de l'écran principal -->
     <string name="title_activity_main">Accueil</string>
 
-    <string name="title_home">Accueil</string>
-    <string name="title_profile_informations">Informations du profil</string>
-    <string name="title_profile_preferences">Préférences</string>
+    <string name="title_home">Vos rencontres</string>
+    <string name="title_profile_informations">Votre profil</string>
+    <string name="title_profile_preferences">Vos critères de mise en relation</string>
 
     <string name="navigation_drawer_open">Ouvrir le volet de navigation</string>
     <string name="navigation_drawer_close">Fermer le volet de navigation</string>
 
-    <string name="action_settings">Réglages</string>
+    <string name="main_action_settings">Réglages</string>
     <string name="lblHome">Ecran d\'accueil</string>
     <string name="lblProfileInformations">Ecran de modification des informations du profil</string>
     <string name="lblProfilePreferences">Ecran de modification des préférences du profil</string>
+    <string name="lblMeetingAvailability">Disponible aux rencontres</string>
+    <string name="lblGender">Votre genre</string>
+    <string name="lblBirthdate">Votre date de naissance</string>
+    <string name="lblOwnHome">Votre lieu de résidence</string>
+    <string name="lblMeetingGender">Genre recherché</string>
+    <string name="lblMeetingAge">Age</string>
 </resources>

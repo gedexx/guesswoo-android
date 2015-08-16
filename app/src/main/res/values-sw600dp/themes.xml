@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- the theme applied to the application or activity -->
+    <style name="GuessWooActionBarTheme"
+           parent="Theme.AppCompat.Light">
+        <item name="android:actionBarStyle">@style/GuessWooActionBar</item>
+
+        <!-- Support library compatibility -->
+        <item name="actionBarStyle">@style/GuessWooActionBar</item>
+    </style>
+
+    <!-- ActionBar styles -->
+    <style name="GuessWooActionBar"
+           parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/guess_woo_purple</item>
+        <item name="android:titleTextStyle">@style/GuessWooActionBarTitleText</item>
+
+        <!-- Support library compatibility -->
+        <item name="background">@color/guess_woo_purple</item>
+        <item name="titleTextStyle">@style/GuessWooActionBarTitleText</item>
+
+    </style>
+
+    <!-- ActionBar title text -->
+    <style name="GuessWooActionBarTitleText"
+           parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/guess_woo_white</item>
+    </style>
+</resources>

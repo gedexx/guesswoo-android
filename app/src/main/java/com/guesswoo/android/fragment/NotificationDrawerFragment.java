@@ -1,4 +1,4 @@
-package com.guesswoo.android;
+package com.guesswoo.android.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -7,16 +7,20 @@ import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import com.guesswoo.android.dummy.DummyContent;
+import com.guesswoo.android.R;
+import com.guesswoo.android.adapter.NotificationAdapter;
+import com.guesswoo.android.domain.Notification;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.ViewById;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Fragment représentant une liste de notifications
@@ -61,11 +65,11 @@ public class NotificationDrawerFragment extends Fragment implements SwipeRefresh
     @AfterViews
     protected void init() {
 
-        ListAdapter mAdapter = new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, DummyContent.ITEMS);
+        NotificationAdapter notificationAdapter = new NotificationAdapter(getActivity(), R.layout
+                .listview_notification_row, dummyNotifications());
 
         // Set the adapter
-        mListView.setAdapter(mAdapter);
+        mListView.setAdapter(notificationAdapter);
 
         swipeRefreshLayout.setOnRefreshListener(this);
     }
@@ -96,7 +100,7 @@ public class NotificationDrawerFragment extends Fragment implements SwipeRefresh
     public void onItemClick(int position) {
         if (null != mListener) {
             // Notifie l'activité qui expose le fragment avec l'item sélectionné dans la liste des éléments
-            mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
+            // mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
         }
     }
 
@@ -135,4 +139,13 @@ public class NotificationDrawerFragment extends Fragment implements SwipeRefresh
         public void onFragmentInteraction(String id);
     }
 
+    private List<Notification> dummyNotifications() {
+        List<Notification> notifications = new ArrayList<>();
+
+        for (int i = 0; i < 20; i++) {
+            notifications.add(new Notification("Notification " + i, new Date(), null));
+        }
+
+        return notifications;
+    }
 }

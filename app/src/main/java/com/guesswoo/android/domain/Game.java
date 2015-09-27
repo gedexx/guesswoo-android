@@ -1,24 +1,45 @@
 package com.guesswoo.android.domain;
 
-import android.graphics.drawable.Drawable;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.Date;
 
+@DatabaseTable(tableName = "games")
 public class Game {
 
+    @DatabaseField(id = true)
+    private Long id;
+
+    @DatabaseField
     private String username;
+
+    @DatabaseField
     private Date updatedDate;
-    private Drawable photo;
+
+    @DatabaseField
+    private String uriPhoto;
+
+    @DatabaseField
     private int photosToDiscoverNb;
 
     public Game() {
     }
 
-    public Game(String username, Date updatedDate, Drawable photo, int photosToDiscoverNb) {
+    public Game(Long id, String username, Date updatedDate, String uriPhoto, int photosToDiscoverNb) {
+        this.id = id;
         this.username = username;
         this.updatedDate = updatedDate;
-        this.photo = photo;
+        this.uriPhoto = uriPhoto;
         this.photosToDiscoverNb = photosToDiscoverNb;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getUsername() {
@@ -37,12 +58,12 @@ public class Game {
         this.updatedDate = updatedDate;
     }
 
-    public Drawable getPhoto() {
-        return photo;
+    public String getUriPhoto() {
+        return uriPhoto;
     }
 
-    public void setPhoto(Drawable photo) {
-        this.photo = photo;
+    public void setUriPhoto(String uriPhoto) {
+        this.uriPhoto = uriPhoto;
     }
 
     public int getPhotosToDiscoverNb() {

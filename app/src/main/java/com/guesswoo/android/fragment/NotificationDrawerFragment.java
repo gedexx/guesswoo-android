@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.TextView;
@@ -12,15 +13,16 @@ import android.widget.TextView;
 import com.guesswoo.android.R;
 import com.guesswoo.android.adapter.NotificationAdapter;
 import com.guesswoo.android.domain.Notification;
+import com.guesswoo.android.helper.database.GuessWooDatabaseHelper;
+import com.j256.ormlite.dao.Dao;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ItemClick;
+import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.sql.SQLException;
 
 /**
  * Fragment représentant une liste de notifications
@@ -38,6 +40,9 @@ public class NotificationDrawerFragment extends Fragment implements SwipeRefresh
 
     @ViewById(R.id.swipe_container)
     protected SwipeRefreshLayout swipeRefreshLayout;
+
+    @OrmLiteDao(helper = GuessWooDatabaseHelper.class)
+    Dao<Notification, Long> notificationDao;
 
     /**
      * Instance du fragment, pour gérer les changements d'orientation de l'activity (permet, à la recréation de
@@ -65,13 +70,19 @@ public class NotificationDrawerFragment extends Fragment implements SwipeRefresh
     @AfterViews
     protected void init() {
 
-        NotificationAdapter notificationAdapter = new NotificationAdapter(getActivity(), R.layout
-                .listview_notification_row, dummyNotifications());
+        NotificationAdapter notificationAdapter;
+        try {
+            notificationAdapter = new NotificationAdapter(getActivity(), R.layout
+                    .listview_notification_row, notificationDao.queryForAll());
 
-        // Set the adapter
-        mListView.setAdapter(notificationAdapter);
+            // Set the adapter
+            mListView.setAdapter(notificationAdapter);
 
-        swipeRefreshLayout.setOnRefreshListener(this);
+            swipeRefreshLayout.setOnRefreshListener(this);
+        } catch (SQLException e) {
+            Log.e(NotificationDrawerFragment.class.getName(), "Can't retrieve notifications data", e);
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -123,12 +134,13 @@ public class NotificationDrawerFragment extends Fragment implements SwipeRefresh
      */
     @Override
     public void onRefresh() {
+        init();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 swipeRefreshLayout.setRefreshing(false);
             }
-        }, 5000);
+        }, 2000);
     }
 
     /**
@@ -137,15 +149,5 @@ public class NotificationDrawerFragment extends Fragment implements SwipeRefresh
      */
     public interface OnFragmentInteractionListener {
         public void onFragmentInteraction(String id);
-    }
-
-    private List<Notification> dummyNotifications() {
-        List<Notification> notifications = new ArrayList<>();
-
-        for (int i = 0; i < 20; i++) {
-            notifications.add(new Notification("Notification " + i, new Date(), null));
-        }
-
-        return notifications;
     }
 }

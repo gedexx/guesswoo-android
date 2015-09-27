@@ -1,20 +1,43 @@
 package com.guesswoo.android.domain;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
+@DatabaseTable(tableName = "messages")
 public class Message {
 
+    @DatabaseField(id = true)
+    private Long id;
+
+    @DatabaseField
     private String userId;
+
+    @DatabaseField
     private String body;
+
+    @DatabaseField
     private String dateTime;
+
+    @DatabaseField
     private boolean isMe;
 
     public Message() {
     }
 
-    public Message(String userId, String body, String dateTime, boolean isMe) {
+    public Message(Long id, String userId, String body, String dateTime, boolean isMe) {
+        this.id = id;
         this.userId = userId;
         this.body = body;
         this.dateTime = dateTime;
         this.isMe = isMe;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getUserId() {

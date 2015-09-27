@@ -10,10 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.guesswoo.android.R;
+import com.guesswoo.android.adapter.utils.AdapterUtils;
 import com.guesswoo.android.domain.Notification;
 
 import java.util.List;
-import java.util.Random;
 
 public class NotificationAdapter extends ArrayAdapter<Notification> {
 
@@ -52,31 +52,10 @@ public class NotificationAdapter extends ArrayAdapter<Notification> {
         Notification notification = notifications.get(position);
         notificationHolder.ivNotificationIcon.setImageResource(R.mipmap.ic_launcher);
         notificationHolder.tvNotificationType.setText(notification.getType());
-        notificationHolder.tvNotificationUpdatedDate.setText(getFormattedDate());
+        notificationHolder.tvNotificationUpdatedDate.setText(AdapterUtils.getFormattedDate(notification
+                .getUpdatedDate()));
 
         return row;
-    }
-
-    /**
-     * Bouchon
-     *
-     * @return
-     */
-    private CharSequence getFormattedDate() {
-
-        Random random = new Random();
-
-        int nbMinutes = random.nextInt(10080);
-
-        if (nbMinutes < 60) {
-            return "il y a " + nbMinutes + " minute(s)";
-        } else if (nbMinutes < 1440) {
-            return "il y a " + nbMinutes / 60 + " heure(s)";
-        } else if (nbMinutes < 10080) {
-            return "il y a " + nbMinutes / 60 / 24 + " jour(s)";
-        }
-
-        return null;
     }
 
     static class NotificationHolder {

@@ -1,22 +1,41 @@
 package com.guesswoo.android.domain;
 
-import android.graphics.drawable.Drawable;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.Date;
 
+@DatabaseTable(tableName = "notifications")
 public class Notification {
 
+    @DatabaseField(id = true)
+    private Long id;
+
+    @DatabaseField
     private String type;
+
+    @DatabaseField
     private Date updatedDate;
-    private Drawable photo;
+
+    @DatabaseField
+    private String uriPhoto;
 
     public Notification() {
     }
 
-    public Notification(String type, Date updatedDate, Drawable photo) {
+    public Notification(Long id, String type, Date updatedDate, String uriPhoto) {
+        this.id = id;
         this.type = type;
         this.updatedDate = updatedDate;
-        this.photo = photo;
+        this.uriPhoto = uriPhoto;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getType() {
@@ -35,11 +54,11 @@ public class Notification {
         this.updatedDate = updatedDate;
     }
 
-    public Drawable getPhoto() {
-        return photo;
+    public String getUriPhoto() {
+        return uriPhoto;
     }
 
-    public void setPhoto(Drawable photo) {
-        this.photo = photo;
+    public void setUriPhoto(String uriPhoto) {
+        this.uriPhoto = uriPhoto;
     }
 }

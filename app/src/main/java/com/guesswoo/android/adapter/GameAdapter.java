@@ -10,10 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.guesswoo.android.R;
+import com.guesswoo.android.adapter.utils.AdapterUtils;
 import com.guesswoo.android.domain.Game;
 
 import java.util.List;
-import java.util.Random;
 
 public class GameAdapter extends ArrayAdapter<Game> {
 
@@ -53,32 +53,10 @@ public class GameAdapter extends ArrayAdapter<Game> {
         Game game = games.get(position);
         gameHolder.ivUserPhoto.setImageResource(R.mipmap.ic_launcher);
         gameHolder.tvUserName.setText(game.getUsername());
-        gameHolder.tvUpdatedDate.setText(getFormattedDate());
+        gameHolder.tvUpdatedDate.setText(AdapterUtils.getFormattedDate(game.getUpdatedDate()));
         gameHolder.tvPhotosToDiscoverNb.setText(game.getPhotosToDiscoverNb() + "photos restante(s)");
 
         return row;
-    }
-
-    /**
-     * Bouchon
-     *
-     * @return
-     */
-    private CharSequence getFormattedDate() {
-
-        Random random = new Random();
-
-        int nbMinutes = random.nextInt(10080);
-
-        if (nbMinutes < 60) {
-            return "il y a " + nbMinutes + " minute(s)";
-        } else if (nbMinutes < 1440) {
-            return "il y a " + nbMinutes / 60 + " heure(s)";
-        } else if (nbMinutes < 10080) {
-            return "il y a " + nbMinutes / 60 / 24 + " jour(s)";
-        }
-
-        return null;
     }
 
     static class GameHolder {

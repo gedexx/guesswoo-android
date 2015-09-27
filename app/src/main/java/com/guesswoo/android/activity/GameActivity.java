@@ -3,6 +3,7 @@ package com.guesswoo.android.activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -11,17 +12,19 @@ import com.guesswoo.android.R;
 import com.guesswoo.android.adapter.MessageAdapter;
 import com.guesswoo.android.domain.Message;
 import com.guesswoo.android.fragment.MainFragment_;
+import com.guesswoo.android.helper.database.GuessWooDatabaseHelper;
+import com.j256.ormlite.dao.Dao;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.ViewById;
 
+import java.sql.SQLException;
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @EActivity(R.layout.activity_game)
 @OptionsMenu(R.menu.menu_game)
@@ -35,6 +38,9 @@ public class GameActivity extends AppCompatActivity {
 
     private MessageAdapter messageAdapter;
 
+    @OrmLiteDao(helper = GuessWooDatabaseHelper.class)
+    Dao<Message, Long> messageDao;
+
     @AfterViews
     protected void init() {
 
@@ -46,8 +52,13 @@ public class GameActivity extends AppCompatActivity {
         CharSequence hintSendMessage = etMessage.getHint() + " " + username;
         etMessage.setHint(hintSendMessage);
 
-        messageAdapter = new MessageAdapter(this, R.layout.listview_message_row, dummyMessages());
-        lvMessages.setAdapter(messageAdapter);
+        try {
+            messageAdapter = new MessageAdapter(this, R.layout.listview_message_row, messageDao.queryForAll());
+            lvMessages.setAdapter(messageAdapter);
+        } catch (SQLException e) {
+            Log.e(GameActivity.class.getName(), "Can't retrieve messages data", e);
+            throw new RuntimeException(e);
+        }
     }
 
     @Click(R.id.btSend)
@@ -58,15 +69,26 @@ public class GameActivity extends AppCompatActivity {
             return;
         }
 
-        Message message = new Message();
-        message.setUserId("122");//dummy
-        message.setBody(messageText);
-        message.setDateTime(DateFormat.getDateTimeInstance().format(new Date()));
-        message.setIsMe(true);
 
-        etMessage.setText("");
+        try {
+            Message message = new Message();
+            message.setId(messageAdapter.getItem(messageAdapter.getCount() - 1).getId() + 1);
+            message.setUserId("122");//dummy
+            message.setBody(messageText);
+            message.setDateTime(DateFormat.getDateTimeInstance().format(new Date()));
+            message.setIsMe(true);
 
-        displayMessage(message);
+            messageDao.createIfNotExists(message);
+
+            etMessage.setText("");
+
+            displayMessage(message);
+
+        } catch (SQLException e) {
+            Log.e(GameActivity.class.getName(), "Can't insert message", e);
+            throw new RuntimeException(e);
+        }
+
     }
 
     public void displayMessage(Message message) {
@@ -78,20 +100,6 @@ public class GameActivity extends AppCompatActivity {
     private void scroll() {
         lvMessages.setSelection(lvMessages.getCount() - 1);
     }
-
-    private List<Message> dummyMessages() {
-
-        List<Message> messages = new ArrayList<>();
-
-        for (int i = 0; i < 15; i++) {
-            Message message = new Message("User 1", "Message " + i, DateFormat.getDateTimeInstance().format(new Date
-                    ()), false);
-            messages.add(message);
-        }
-
-        return messages;
-    }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

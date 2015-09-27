@@ -3,6 +3,7 @@ package com.guesswoo.android.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ListView;
 
@@ -10,23 +11,28 @@ import com.guesswoo.android.R;
 import com.guesswoo.android.activity.GameActivity_;
 import com.guesswoo.android.adapter.GameAdapter;
 import com.guesswoo.android.domain.Game;
+import com.guesswoo.android.helper.database.GuessWooDatabaseHelper;
+import com.j256.ormlite.dao.Dao;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ItemClick;
+import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.sql.SQLException;
 
 @EFragment(R.layout.fragment_main)
 public class MainFragment extends Fragment {
 
     public static final String USERNAME = "username";
+
     @ViewById(R.id.lvGames)
     protected ListView lvGames;
+
+
+    @OrmLiteDao(helper = GuessWooDatabaseHelper.class)
+    Dao<Game, Long> gameDao;
 
     /**
      * Instance du fragment, pour gérer les changements d'orientation de l'activity (permet, à la recréation de
@@ -51,7 +57,13 @@ public class MainFragment extends Fragment {
     @AfterViews
     protected void init() {
 
-        GameAdapter gameAdapter = new GameAdapter(getActivity(), R.layout.listview_game_row, dummyGames());
+        GameAdapter gameAdapter = null;
+        try {
+            gameAdapter = new GameAdapter(getActivity(), R.layout.listview_game_row, gameDao.queryForAll());
+        } catch (SQLException e) {
+            Log.e(MainFragment.class.getName(), "Can't retrieve games data", e);
+            throw new RuntimeException(e);
+        }
 
         // Set the adapter
         lvGames.setAdapter(gameAdapter);
@@ -78,16 +90,5 @@ public class MainFragment extends Fragment {
         gameIntent.putExtra(USERNAME, selectedGame.getUsername());
 
         startActivity(gameIntent);
-    }
-
-    private List<Game> dummyGames() {
-        List<Game> games = new ArrayList<>();
-
-        for (int i = 0; i < 20; i++) {
-            Random random = new Random();
-            games.add(new Game("User " + i, new Date(), null, random.nextInt(20)));
-        }
-
-        return games;
     }
 }

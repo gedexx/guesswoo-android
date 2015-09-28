@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
     <uses-permission android:name="android.permission.READ_PROFILE"/>
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:name=".GuessWooApplication_"
@@ -15,7 +16,7 @@
         android:label="@string/app_name"
         android:theme="@style/GuessWooActionBarTheme">
         <service
-            android:name=".service.rest.LoginService_"
+            android:name=".service.rest.UserService_"
             android:enabled="true"/>
         <activity android:name=".activity.SplashActivity_">
             <intent-filter>

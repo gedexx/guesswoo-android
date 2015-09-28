@@ -54,21 +54,21 @@
         android:background="@color/guess_woo_white">
 
         <LinearLayout
-            android:id="@+id/email_login_form"
+            android:id="@+id/user_login_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             >
 
             <AutoCompleteTextView
-                android:id="@+id/email"
+                android:id="@+id/user"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:hint="@string/prompt_email"
-                android:inputType="textEmailAddress"
+                android:hint="@string/prompt_user"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:inputType="textPersonName"/>
 
             <EditText
                 android:id="@+id/password"
@@ -84,7 +84,7 @@
                 android:layout_weight="1"/>
 
             <Button
-                android:id="@+id/email_sign_in_button"
+                android:id="@+id/login_button"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"

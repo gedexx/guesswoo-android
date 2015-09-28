@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.guesswoo.android.GuessWooApplication;
 import com.guesswoo.android.R;
 import com.guesswoo.android.fragment.MainFragment_;
 import com.guesswoo.android.fragment.NavigationDrawerFragment;
@@ -16,6 +17,7 @@ import com.guesswoo.android.fragment.ProfileInformationsFragment_;
 import com.guesswoo.android.fragment.ProfilePreferencesFragment_;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.App;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.ViewById;
@@ -50,6 +52,9 @@ public class MainActivity extends AppCompatActivity
      * Permet de stocker le titre des différents fragments ouverts via le fragment de navigation
      */
     private CharSequence mTitle;
+
+    @App
+    GuessWooApplication application;
 
     @AfterViews
     protected void init() {

@@ -18,8 +18,14 @@ import android.widget.TextView;
 
 import com.guesswoo.android.GuessWooApplication;
 import com.guesswoo.android.R;
+import com.guesswoo.android.domain.Game;
+import com.guesswoo.android.fragment.MainFragment_;
+import com.guesswoo.android.helper.database.GuessWooDatabaseHelper;
+import com.guesswoo.android.service.rest.GameService;
 import com.guesswoo.android.service.rest.UserService;
+import com.guesswoo.android.service.rest.response.GameResponse;
 import com.guesswoo.android.service.rest.response.LoginResponse;
+import com.j256.ormlite.dao.Dao;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.App;
@@ -27,12 +33,17 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.EditorAction;
+import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
 import org.springframework.core.NestedRuntimeException;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -64,6 +75,12 @@ public class LoginActivity extends Activity {
 
     @RestService
     UserService userService;
+
+    @RestService
+    GameService gameService;
+
+    @OrmLiteDao(helper = GuessWooDatabaseHelper.class)
+    Dao<Game, String> gameDao;
 
     @AfterViews
     protected void init() {
@@ -192,7 +209,31 @@ public class LoginActivity extends Activity {
                 .getToken());
 
         if (success) {
-            startActivity(new Intent(getApplicationContext(), MainActivity_.class));
+
+            List<Game> games = new ArrayList<>();
+            try {
+                gameService.setHeader("X-Token", application.getLoginResponse().getToken());
+                for (GameResponse gameResponse : gameService.getGames()) {
+                    Game game = new Game(gameResponse.getId(), gameResponse.getUsername(), gameResponse.getDate(),
+                            gameResponse.getInitialPhoto(), gameResponse.getActivePhotos());
+                    games.add(game);
+                }
+            } catch (NestedRuntimeException e) {
+                games = new ArrayList<>();
+            }
+
+            try {
+                for (Game game : games) {
+                    gameDao.createOrUpdate(game);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            Intent mainIntent = new Intent(getApplicationContext(), MainActivity_.class);
+            mainIntent.putExtra(MainFragment_.USERNAME, username);
+
+            startActivity(mainIntent);
         } else {
             showError();
         }

@@ -13,6 +13,8 @@ import com.guesswoo.android.adapter.GameAdapter;
 import com.guesswoo.android.domain.Game;
 import com.guesswoo.android.helper.database.GuessWooDatabaseHelper;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
@@ -32,7 +34,7 @@ public class MainFragment extends Fragment {
 
 
     @OrmLiteDao(helper = GuessWooDatabaseHelper.class)
-    Dao<Game, Long> gameDao;
+    Dao<Game, String> gameDao;
 
     /**
      * Instance du fragment, pour gérer les changements d'orientation de l'activity (permet, à la recréation de
@@ -57,9 +59,15 @@ public class MainFragment extends Fragment {
     @AfterViews
     protected void init() {
 
+        Bundle bundle = getActivity().getIntent().getExtras();
+        String username = bundle.getString(MainFragment_.USERNAME);
+
         GameAdapter gameAdapter = null;
         try {
-            gameAdapter = new GameAdapter(getActivity(), R.layout.listview_game_row, gameDao.queryForAll());
+            QueryBuilder<Game, String> qb = gameDao.queryBuilder();
+            qb.where().like("id", "%" + username + "%");
+            PreparedQuery<Game> pq = qb.prepare();
+            gameAdapter = new GameAdapter(getActivity(), R.layout.listview_game_row, gameDao.query(pq));
         } catch (SQLException e) {
             Log.e(MainFragment.class.getName(), "Can't retrieve games data", e);
             throw new RuntimeException(e);

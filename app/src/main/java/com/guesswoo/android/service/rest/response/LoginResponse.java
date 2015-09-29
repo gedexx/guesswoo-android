@@ -2,9 +2,9 @@ package com.guesswoo.android.service.rest.response;
 
 public class LoginResponse {
 
-    String token;
-    String error;
-    String message;
+    private String token;
+    private String error;
+    private String message;
 
     public String getError() {
         return error;

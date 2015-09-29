@@ -41,7 +41,7 @@ public class GuessWooDatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
 
         // Insertion initial en SQLite
-        insertDummyGames();
+        //insertDummyGames();
         insertDummyMessages();
         insertDummyNotifications();
     }
@@ -64,7 +64,7 @@ public class GuessWooDatabaseHelper extends OrmLiteSqliteOpenHelper {
         try {
             for (int i = 0; i < 20; i++) {
                 Random random = new Random();
-                getDao(Game.class).createIfNotExists(new Game((long) i, "User " + i, getRandomDate(), null,
+                getDao(Game.class).createIfNotExists(new Game(String.valueOf(i), "User " + i, getRandomDate(), null,
                         random.nextInt
                                 (20)));
             }

@@ -18,6 +18,9 @@
         <service
             android:name=".service.rest.UserService_"
             android:enabled="true"/>
+        <service
+            android:name=".service.rest.GameService_"
+            android:enabled="true"/>
         <activity android:name=".activity.SplashActivity_">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

@@ -9,7 +9,7 @@ import java.util.Date;
 public class Game {
 
     @DatabaseField(id = true)
-    private Long id;
+    private String id;
 
     @DatabaseField
     private String username;
@@ -26,7 +26,7 @@ public class Game {
     public Game() {
     }
 
-    public Game(Long id, String username, Date updatedDate, String uriPhoto, int photosToDiscoverNb) {
+    public Game(String id, String username, Date updatedDate, String uriPhoto, int photosToDiscoverNb) {
         this.id = id;
         this.username = username;
         this.updatedDate = updatedDate;
@@ -34,11 +34,11 @@ public class Game {
         this.photosToDiscoverNb = photosToDiscoverNb;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

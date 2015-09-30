@@ -8,27 +8,39 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.guesswoo.android.GuessWooApplication;
 import com.guesswoo.android.R;
 import com.guesswoo.android.adapter.MessageAdapter;
 import com.guesswoo.android.domain.Message;
 import com.guesswoo.android.fragment.MainFragment_;
 import com.guesswoo.android.helper.database.GuessWooDatabaseHelper;
+import com.guesswoo.android.service.rest.GameService;
+import com.guesswoo.android.service.rest.response.MessageResponse;
 import com.j256.ormlite.dao.Dao;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.App;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.OrmLiteDao;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.rest.RestService;
+import org.springframework.core.NestedRuntimeException;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.sql.SQLException;
 import java.text.DateFormat;
-import java.util.Date;
 
 @EActivity(R.layout.activity_game)
 @OptionsMenu(R.menu.menu_game)
 public class GameActivity extends AppCompatActivity {
+
+    @App
+    GuessWooApplication application;
 
     @ViewById(R.id.lvMessages)
     protected ListView lvMessages;
@@ -38,14 +50,21 @@ public class GameActivity extends AppCompatActivity {
 
     private MessageAdapter messageAdapter;
 
+    private String username;
+
+    private MessageResponse messageResponse;
+
+    @RestService
+    GameService gameService;
+
     @OrmLiteDao(helper = GuessWooDatabaseHelper.class)
-    Dao<Message, Long> messageDao;
+    Dao<Message, String> messageDao;
 
     @AfterViews
     protected void init() {
 
         Bundle bundle = getIntent().getExtras();
-        String username = bundle.getString(MainFragment_.USERNAME);
+        username = bundle.getString(MainFragment_.USERNAME);
 
         getSupportActionBar().setTitle(username);
 
@@ -69,13 +88,18 @@ public class GameActivity extends AppCompatActivity {
             return;
         }
 
+        doSendMessageInBackground(messageText);
+    }
 
+    @UiThread
+    protected void saveMessageAndDisplay() {
         try {
+
             Message message = new Message();
-            message.setId(messageAdapter.getItem(messageAdapter.getCount() - 1).getId() + 1);
-            message.setUserId("122");//dummy
-            message.setBody(messageText);
-            message.setDateTime(DateFormat.getDateTimeInstance().format(new Date()));
+            message.setId(messageResponse.getGameId());
+            message.setUserId(messageResponse.getTo());//dummy
+            message.setBody(messageResponse.getContent());
+            message.setDateTime(DateFormat.getDateTimeInstance().format(messageResponse.getDate()));
             message.setIsMe(true);
 
             messageDao.createIfNotExists(message);
@@ -88,7 +112,24 @@ public class GameActivity extends AppCompatActivity {
             Log.e(GameActivity.class.getName(), "Can't insert message", e);
             throw new RuntimeException(e);
         }
+    }
 
+    @Background
+    protected void doSendMessageInBackground(String message) {
+        try {
+            // Construction des paramètres à passer au login
+            MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+            formData.set("message", message);
+
+            // Construction du header
+            gameService.setHeader("X-Token", application.getLoginResponse().getToken());
+
+            messageResponse = gameService.sendMessage(username, formData);
+
+            saveMessageAndDisplay();
+        } catch (NestedRuntimeException e) {
+            messageResponse = null;
+        }
     }
 
     public void displayMessage(Message message) {

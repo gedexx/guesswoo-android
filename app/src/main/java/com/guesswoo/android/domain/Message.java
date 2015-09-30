@@ -7,7 +7,7 @@ import com.j256.ormlite.table.DatabaseTable;
 public class Message {
 
     @DatabaseField(id = true)
-    private Long id;
+    private String id;
 
     @DatabaseField
     private String userId;
@@ -24,7 +24,7 @@ public class Message {
     public Message() {
     }
 
-    public Message(Long id, String userId, String body, String dateTime, boolean isMe) {
+    public Message(String id, String userId, String body, String dateTime, boolean isMe) {
         this.id = id;
         this.userId = userId;
         this.body = body;
@@ -32,11 +32,11 @@ public class Message {
         this.isMe = isMe;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

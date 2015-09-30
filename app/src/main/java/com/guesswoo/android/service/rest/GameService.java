@@ -1,15 +1,18 @@
 package com.guesswoo.android.service.rest;
 
 import com.guesswoo.android.service.rest.response.GameResponse;
+import com.guesswoo.android.service.rest.response.MessageResponse;
 
 import org.androidannotations.annotations.rest.Accept;
 import org.androidannotations.annotations.rest.Get;
+import org.androidannotations.annotations.rest.Put;
 import org.androidannotations.annotations.rest.RequiresHeader;
 import org.androidannotations.annotations.rest.Rest;
 import org.androidannotations.api.rest.MediaType;
 import org.androidannotations.api.rest.RestClientErrorHandling;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.util.MultiValueMap;
 
 import java.util.List;
 
@@ -21,6 +24,11 @@ public interface GameService extends RestClientErrorHandling {
     @Accept(MediaType.APPLICATION_JSON)
     @RequiresHeader("X-Token")
     List<GameResponse> getGames();
+
+    @Put("/{username}/messages/")
+    @Accept(MediaType.APPLICATION_JSON)
+    @RequiresHeader("X-Token")
+    MessageResponse sendMessage(String username, MultiValueMap<String, String> formData);
 
     void setHeader(String name, String value);
 }

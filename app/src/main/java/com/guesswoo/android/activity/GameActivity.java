@@ -15,7 +15,7 @@ import com.guesswoo.android.domain.Message;
 import com.guesswoo.android.fragment.MainFragment_;
 import com.guesswoo.android.helper.database.GuessWooDatabaseHelper;
 import com.guesswoo.android.service.rest.GameService;
-import com.guesswoo.android.service.rest.response.MessageResponse;
+import com.guesswoo.api.dto.responses.MessageResponse;
 import com.j256.ormlite.dao.Dao;
 
 import org.androidannotations.annotations.AfterViews;
@@ -53,9 +53,6 @@ public class GameActivity extends AppCompatActivity {
     private String username;
 
     private MessageResponse messageResponse;
-
-    @RestService
-    GameService gameService;
 
     @OrmLiteDao(helper = GuessWooDatabaseHelper.class)
     Dao<Message, String> messageDao;
@@ -96,9 +93,9 @@ public class GameActivity extends AppCompatActivity {
         try {
 
             Message message = new Message();
-            message.setId(messageResponse.getGameId());
-            message.setUserId(messageResponse.getTo());//dummy
-            message.setBody(messageResponse.getContent());
+            message.setId(messageResponse.getId());
+            message.setUserId(messageResponse.getTo());
+            message.setBody(messageResponse.getContent().toString());
             message.setDateTime(DateFormat.getDateTimeInstance().format(messageResponse.getDate()));
             message.setIsMe(true);
 
@@ -121,10 +118,7 @@ public class GameActivity extends AppCompatActivity {
             MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
             formData.set("message", message);
 
-            // Construction du header
-            gameService.setHeader("X-Token", application.getLoginResponse().getToken());
-
-            messageResponse = gameService.sendMessage(username, formData);
+            messageResponse = application.getGameService().sendMessage(username, formData);
 
             saveMessageAndDisplay();
         } catch (NestedRuntimeException e) {

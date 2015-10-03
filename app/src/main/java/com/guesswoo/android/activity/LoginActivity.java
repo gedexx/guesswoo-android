@@ -12,7 +12,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -21,10 +20,9 @@ import com.guesswoo.android.R;
 import com.guesswoo.android.domain.Game;
 import com.guesswoo.android.fragment.MainFragment_;
 import com.guesswoo.android.helper.database.GuessWooDatabaseHelper;
-import com.guesswoo.android.service.rest.GameService;
 import com.guesswoo.android.service.rest.UserService;
-import com.guesswoo.android.service.rest.response.GameResponse;
-import com.guesswoo.android.service.rest.response.LoginResponse;
+import com.guesswoo.api.dto.responses.GameResponse;
+import com.guesswoo.api.dto.responses.TokenResponse;
 import com.j256.ormlite.dao.Dao;
 
 import org.androidannotations.annotations.AfterViews;
@@ -36,7 +34,6 @@ import org.androidannotations.annotations.EditorAction;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.rest.RestService;
 import org.springframework.core.NestedRuntimeException;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -64,20 +61,11 @@ public class LoginActivity extends Activity {
     @ViewById(R.id.password)
     protected EditText mPasswordView;
 
-    @ViewById(R.id.login_button)
-    protected Button mLoginSignInButton;
-
     @ViewById(R.id.login_progress)
     protected View mProgressView;
 
     @ViewById(R.id.login_form)
     protected View mLoginFormView;
-
-    @RestService
-    UserService userService;
-
-    @RestService
-    GameService gameService;
 
     @OrmLiteDao(helper = GuessWooDatabaseHelper.class)
     Dao<Game, String> gameDao;
@@ -194,26 +182,26 @@ public class LoginActivity extends Activity {
     @Background
     protected void doLoginInBackground(String username, String password) {
 
+        TokenResponse tokenResponse;
         try {
             // Construction des paramètres à passer au login
             MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-            formData.set("username", username);
-            formData.set("password", password);
+            formData.set(UserService.USERNAME, username);
+            formData.set(UserService.PASSWORD, password);
 
-            application.setLoginResponse(userService.login(formData));
+            tokenResponse = (application.getUserService().login(formData));
         } catch (NestedRuntimeException e) {
-            application.setLoginResponse(new LoginResponse());
+            tokenResponse = new TokenResponse();
         }
 
-        boolean success = !TextUtils.isEmpty(application.getLoginResponse()
-                .getToken());
+        boolean success = !TextUtils.isEmpty(tokenResponse.getToken());
 
         if (success) {
 
             List<Game> games = new ArrayList<>();
             try {
-                gameService.setHeader("X-Token", application.getLoginResponse().getToken());
-                for (GameResponse gameResponse : gameService.getGames()) {
+                application.getGameService().setHeader(GuessWooApplication.X_TOKEN, tokenResponse.getToken());
+                for (GameResponse gameResponse : application.getGameService().getGames()) {
                     Game game = new Game(gameResponse.getId(), gameResponse.getUsername(), gameResponse.getDate(),
                             gameResponse.getInitialPhoto(), gameResponse.getActivePhotos());
                     games.add(game);
@@ -230,10 +218,8 @@ public class LoginActivity extends Activity {
                 e.printStackTrace();
             }
 
-            Intent mainIntent = new Intent(getApplicationContext(), MainActivity_.class);
-            mainIntent.putExtra(MainFragment_.USERNAME, username);
-
-            startActivity(mainIntent);
+            application.setConnectedUsername(username);
+            startActivity(new Intent(getApplicationContext(), MainActivity_.class));
         } else {
             showError();
         }

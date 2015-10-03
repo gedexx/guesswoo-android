@@ -19,7 +19,7 @@ public class SplashActivity extends Activity {
     /**
      * Durée de l'écran de démarrage avant apparation de l'activité de login
      */
-    private final int SPLASH_DISPLAY_LENGTH = 3000;
+    private final int SPLASH_DISPLAY_LENGTH = 1000;
 
     @AfterViews
     protected void init() {

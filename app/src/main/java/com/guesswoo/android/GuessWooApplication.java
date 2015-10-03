@@ -3,15 +3,19 @@ package com.guesswoo.android;
 import android.app.Application;
 import android.app.NotificationManager;
 
-import com.guesswoo.android.service.rest.response.LoginResponse;
+import com.guesswoo.android.service.rest.GameService;
+import com.guesswoo.android.service.rest.UserService;
 
 import org.androidannotations.annotations.EApplication;
 import org.androidannotations.annotations.SystemService;
+import org.androidannotations.annotations.rest.RestService;
 
 @EApplication
 public class GuessWooApplication extends Application {
 
-    private LoginResponse loginResponse;
+    public static final String X_TOKEN = "X-Token";
+
+    private String connectedUsername;
 
     @Override
     public void onCreate() {
@@ -21,11 +25,29 @@ public class GuessWooApplication extends Application {
     @SystemService
     NotificationManager notificationManager;
 
-    public LoginResponse getLoginResponse() {
-        return loginResponse;
+    @RestService
+    GameService gameService;
+
+    @RestService
+    UserService userService;
+
+    public String getConnectedUsername() {
+        return connectedUsername;
     }
 
-    public void setLoginResponse(LoginResponse loginResponse) {
-        this.loginResponse = loginResponse;
+    public void setConnectedUsername(String connectedUsername) {
+        this.connectedUsername = connectedUsername;
+    }
+
+    public NotificationManager getNotificationManager() {
+        return notificationManager;
+    }
+
+    public GameService getGameService() {
+        return gameService;
+    }
+
+    public UserService getUserService() {
+        return userService;
     }
 }

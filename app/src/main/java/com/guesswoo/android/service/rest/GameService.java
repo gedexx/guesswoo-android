@@ -1,7 +1,8 @@
 package com.guesswoo.android.service.rest;
 
-import com.guesswoo.android.service.rest.response.GameResponse;
-import com.guesswoo.android.service.rest.response.MessageResponse;
+import com.guesswoo.android.GuessWooApplication;
+import com.guesswoo.api.dto.responses.GameResponse;
+import com.guesswoo.api.dto.responses.MessageResponse;
 
 import org.androidannotations.annotations.rest.Accept;
 import org.androidannotations.annotations.rest.Get;
@@ -22,12 +23,17 @@ public interface GameService extends RestClientErrorHandling {
 
     @Get("/")
     @Accept(MediaType.APPLICATION_JSON)
-    @RequiresHeader("X-Token")
+    @RequiresHeader(GuessWooApplication.X_TOKEN)
     List<GameResponse> getGames();
+
+    @Get("/{username}/messages/")
+    @Accept(MediaType.APPLICATION_JSON)
+    @RequiresHeader(GuessWooApplication.X_TOKEN)
+    List<MessageResponse> getMessagesFromGame(String username);
 
     @Put("/{username}/messages/")
     @Accept(MediaType.APPLICATION_JSON)
-    @RequiresHeader("X-Token")
+    @RequiresHeader(GuessWooApplication.X_TOKEN)
     MessageResponse sendMessage(String username, MultiValueMap<String, String> formData);
 
     void setHeader(String name, String value);

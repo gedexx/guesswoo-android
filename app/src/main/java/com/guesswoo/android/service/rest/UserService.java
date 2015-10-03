@@ -1,6 +1,6 @@
 package com.guesswoo.android.service.rest;
 
-import com.guesswoo.android.service.rest.response.LoginResponse;
+import com.guesswoo.api.dto.responses.TokenResponse;
 
 import org.androidannotations.annotations.rest.Accept;
 import org.androidannotations.annotations.rest.Post;
@@ -15,9 +15,12 @@ import org.springframework.util.MultiValueMap;
         MappingJackson2HttpMessageConverter.class})
 public interface UserService extends RestClientErrorHandling {
 
+    String USERNAME = "username";
+    String PASSWORD = "password";
+
     @Post("/login/")
     @Accept(MediaType.APPLICATION_JSON)
-    LoginResponse login(MultiValueMap<String, String> formData);
+    TokenResponse login(MultiValueMap<String, String> formData);
 
 }
 

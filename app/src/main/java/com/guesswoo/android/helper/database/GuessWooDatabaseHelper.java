@@ -46,6 +46,18 @@ public class GuessWooDatabaseHelper extends OrmLiteSqliteOpenHelper {
         insertDummyNotifications();
     }
 
+    public void emptyTables() {
+        try {
+            Log.i(GuessWooDatabaseHelper.class.getName(), "emptyTables");
+            TableUtils.clearTable(connectionSource, Game.class);
+            TableUtils.clearTable(connectionSource, Message.class);
+            TableUtils.clearTable(connectionSource, Notification.class);
+        } catch (SQLException e) {
+            Log.e(GuessWooDatabaseHelper.class.getName(), "Can't empty database", e);
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
 
@@ -58,6 +70,7 @@ public class GuessWooDatabaseHelper extends OrmLiteSqliteOpenHelper {
             throw new RuntimeException(e);
         }
     }
+
 
     private void insertDummyGames() {
 

@@ -15,9 +15,6 @@ import org.springframework.util.MultiValueMap;
         MappingJackson2HttpMessageConverter.class})
 public interface UserService extends RestClientErrorHandling {
 
-    String USERNAME = "username";
-    String PASSWORD = "password";
-
     @Post("/login/")
     @Accept(MediaType.APPLICATION_JSON)
     TokenResponse login(MultiValueMap<String, String> formData);

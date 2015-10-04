@@ -14,8 +14,7 @@ import com.guesswoo.android.adapter.MessageAdapter;
 import com.guesswoo.android.domain.Message;
 import com.guesswoo.android.fragment.MainFragment_;
 import com.guesswoo.android.helper.database.GuessWooDatabaseHelper;
-import com.guesswoo.android.service.rest.GameService;
-import com.guesswoo.api.dto.responses.MessageResponse;
+import com.guesswoo.android.service.rest.response.MessageResponseTemp;
 import com.j256.ormlite.dao.Dao;
 
 import org.androidannotations.annotations.AfterViews;
@@ -27,7 +26,6 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.rest.RestService;
 import org.springframework.core.NestedRuntimeException;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -50,9 +48,10 @@ public class GameActivity extends AppCompatActivity {
 
     private MessageAdapter messageAdapter;
 
+    private String gameId;
     private String username;
 
-    private MessageResponse messageResponse;
+    private MessageResponseTemp messageResponse;
 
     @OrmLiteDao(helper = GuessWooDatabaseHelper.class)
     Dao<Message, String> messageDao;
@@ -61,6 +60,7 @@ public class GameActivity extends AppCompatActivity {
     protected void init() {
 
         Bundle bundle = getIntent().getExtras();
+        gameId = bundle.getString(MainFragment_.GAME);
         username = bundle.getString(MainFragment_.USERNAME);
 
         getSupportActionBar().setTitle(username);
@@ -69,7 +69,8 @@ public class GameActivity extends AppCompatActivity {
         etMessage.setHint(hintSendMessage);
 
         try {
-            messageAdapter = new MessageAdapter(this, R.layout.listview_message_row, messageDao.queryForAll());
+            messageAdapter = new MessageAdapter(this, R.layout.listview_message_row, messageDao.queryForEq
+                    ("gameId", gameId));
             lvMessages.setAdapter(messageAdapter);
         } catch (SQLException e) {
             Log.e(GameActivity.class.getName(), "Can't retrieve messages data", e);
@@ -94,7 +95,7 @@ public class GameActivity extends AppCompatActivity {
 
             Message message = new Message();
             message.setId(messageResponse.getId());
-            message.setUserId(messageResponse.getTo());
+            message.setGameId(messageResponse.getTo());
             message.setBody(messageResponse.getContent().toString());
             message.setDateTime(DateFormat.getDateTimeInstance().format(messageResponse.getDate()));
             message.setIsMe(true);

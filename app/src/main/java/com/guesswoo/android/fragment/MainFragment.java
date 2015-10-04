@@ -14,10 +14,9 @@ import com.guesswoo.android.adapter.GameAdapter;
 import com.guesswoo.android.domain.Game;
 import com.guesswoo.android.domain.Message;
 import com.guesswoo.android.helper.database.GuessWooDatabaseHelper;
-import com.guesswoo.api.dto.responses.MessageResponse;
+import com.guesswoo.android.service.rest.response.MessageResponseTemp;
+import com.guesswoo.api.dto.enums.MessageType;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.App;
@@ -25,16 +24,17 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.OrmLiteDao;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.springframework.core.NestedRuntimeException;
 
 import java.sql.SQLException;
 import java.text.DateFormat;
-import java.util.List;
 
 @EFragment(R.layout.fragment_main)
 public class MainFragment extends Fragment {
 
+    public static final String GAME = "game";
     public static final String USERNAME = "username";
 
     @App
@@ -74,10 +74,7 @@ public class MainFragment extends Fragment {
 
         GameAdapter gameAdapter = null;
         try {
-            QueryBuilder<Game, String> qb = gameDao.queryBuilder();
-            qb.where().like("id", "%" + application.getConnectedUsername() + "%");
-            PreparedQuery<Game> pq = qb.prepare();
-            gameAdapter = new GameAdapter(getActivity(), R.layout.listview_game_row, gameDao.query(pq));
+            gameAdapter = new GameAdapter(getActivity(), R.layout.listview_game_row, gameDao.queryForAll());
         } catch (SQLException e) {
             Log.e(MainFragment.class.getName(), "Can't retrieve games data", e);
             throw new RuntimeException(e);
@@ -99,15 +96,22 @@ public class MainFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    @UiThread
     @ItemClick(R.id.lvGames)
     public void onItemClick(int position) {
 
         Game selectedGame = (Game) lvGames.getItemAtPosition(position);
+        doGetMessagesFromGameInBackground(selectedGame.getUsername());
+
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         Intent gameIntent = new Intent(getActivity(), GameActivity_.class);
+        gameIntent.putExtra(GAME, selectedGame.getId());
         gameIntent.putExtra(USERNAME, selectedGame.getUsername());
-
-        doGetMessagesFromGameInBackground(selectedGame.getUsername());
 
         startActivity(gameIntent);
     }
@@ -115,18 +119,21 @@ public class MainFragment extends Fragment {
     @Background
     protected void doGetMessagesFromGameInBackground(String username) {
         try {
-            for (MessageResponse messageResponse : application.getGameService().getMessagesFromGame(username)) {
+            for (MessageResponseTemp messageResponse : application.getGameService().getMessagesFromGame(username)) {
 
-                Message message = new Message(messageResponse.getId(), messageResponse.getGameId(), messageResponse
-                        .getContent().toString(), DateFormat
-                        .getDateTimeInstance().format(messageResponse.getDate()), messageResponse.getFrom().equals
-                        (application.getConnectedUsername()));
+                if (MessageType.CHAT.equals(messageResponse.getType())) {
 
-                try {
-                    messageDao.createOrUpdate(message);
-                } catch (SQLException e) {
-                    Log.e(GuessWooDatabaseHelper.class.getName(), "Can't insert retrieved messages", e);
-                    throw new RuntimeException(e);
+                    Message message = new Message(messageResponse.getId(), messageResponse.getGameId(), messageResponse
+                            .getContent().toString(), DateFormat
+                            .getDateTimeInstance().format(messageResponse.getDate()), messageResponse.getFrom().equals
+                            (application.getConnectedUsername()));
+
+                    try {
+                        messageDao.createOrUpdate(message);
+                    } catch (SQLException e) {
+                        Log.e(GuessWooDatabaseHelper.class.getName(), "Can't insert retrieved messages", e);
+                        throw new RuntimeException(e);
+                    }
                 }
             }
 

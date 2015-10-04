@@ -10,7 +10,7 @@ public class Message {
     private String id;
 
     @DatabaseField
-    private String userId;
+    private String gameId;
 
     @DatabaseField
     private String body;
@@ -24,9 +24,9 @@ public class Message {
     public Message() {
     }
 
-    public Message(String id, String userId, String body, String dateTime, boolean isMe) {
+    public Message(String id, String gameId, String body, String dateTime, boolean isMe) {
         this.id = id;
-        this.userId = userId;
+        this.gameId = gameId;
         this.body = body;
         this.dateTime = dateTime;
         this.isMe = isMe;
@@ -40,12 +40,12 @@ public class Message {
         this.id = id;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getGameId() {
+        return gameId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setGameId(String gameId) {
+        this.gameId = gameId;
     }
 
     public String getBody() {

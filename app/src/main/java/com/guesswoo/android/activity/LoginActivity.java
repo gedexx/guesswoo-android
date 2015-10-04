@@ -18,9 +18,7 @@ import android.widget.TextView;
 import com.guesswoo.android.GuessWooApplication;
 import com.guesswoo.android.R;
 import com.guesswoo.android.domain.Game;
-import com.guesswoo.android.fragment.MainFragment_;
 import com.guesswoo.android.helper.database.GuessWooDatabaseHelper;
-import com.guesswoo.android.service.rest.UserService;
 import com.guesswoo.api.dto.responses.GameResponse;
 import com.guesswoo.api.dto.responses.TokenResponse;
 import com.j256.ormlite.dao.Dao;
@@ -49,6 +47,9 @@ import java.util.List;
 @EActivity(R.layout.activity_login)
 public class LoginActivity extends Activity {
 
+    public static final String USERNAME = "username";
+    public static final String PASSWORD = "password";
+
     @App
     GuessWooApplication application;
 
@@ -67,8 +68,10 @@ public class LoginActivity extends Activity {
     @ViewById(R.id.login_form)
     protected View mLoginFormView;
 
+    protected GuessWooDatabaseHelper guessWooDatabaseHelper;
+
     @OrmLiteDao(helper = GuessWooDatabaseHelper.class)
-    Dao<Game, String> gameDao;
+    protected Dao<Game, String> gameDao;
 
     @AfterViews
     protected void init() {
@@ -76,6 +79,8 @@ public class LoginActivity extends Activity {
         // @ViewById pour les composants présents sur le layout de l'activité)
         Typeface typeFace = Typeface.createFromAsset(getAssets(), "fonts/pacifico.ttf");
         tvLblGuessWoo.setTypeface(typeFace);
+
+        guessWooDatabaseHelper = new GuessWooDatabaseHelper(getApplicationContext());
     }
 
     @EditorAction(R.id.password)
@@ -186,8 +191,8 @@ public class LoginActivity extends Activity {
         try {
             // Construction des paramètres à passer au login
             MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-            formData.set(UserService.USERNAME, username);
-            formData.set(UserService.PASSWORD, password);
+            formData.set(USERNAME, username);
+            formData.set(PASSWORD, password);
 
             tokenResponse = (application.getUserService().login(formData));
         } catch (NestedRuntimeException e) {
@@ -197,6 +202,8 @@ public class LoginActivity extends Activity {
         boolean success = !TextUtils.isEmpty(tokenResponse.getToken());
 
         if (success) {
+
+            guessWooDatabaseHelper.emptyTables();
 
             List<Game> games = new ArrayList<>();
             try {

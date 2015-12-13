@@ -8,15 +8,16 @@
         android:id="@+id/llContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:weightSum="1">
 
         <ImageView
             android:id="@+id/ivProfileLeft"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@mipmap/ic_launcher"
             android:layout_gravity="center_vertical"
-            android:layout_marginBottom="5dp"/>
+            android:layout_marginBottom="5dp"
+            android:layout_weight="0.1"/>
 
         <LinearLayout
             android:id="@+id/llBackground"
@@ -24,6 +25,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@drawable/abc_dialog_material_background_light"
+            android:layout_weight="0.8"
             >
 
             <TextView
@@ -53,9 +55,9 @@
             android:id="@+id/ivProfileRight"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@mipmap/ic_launcher"
             android:layout_gravity="center_vertical"
-            android:layout_marginBottom="5dp"/>
+            android:layout_marginBottom="5dp"
+            android:layout_weight="0.1"/>
 
     </LinearLayout>
 </RelativeLayout>

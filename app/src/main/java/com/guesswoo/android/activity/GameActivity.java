@@ -11,6 +11,7 @@ import android.widget.ListView;
 import com.guesswoo.android.GuessWooApplication;
 import com.guesswoo.android.R;
 import com.guesswoo.android.adapter.MessageAdapter;
+import com.guesswoo.android.domain.Game;
 import com.guesswoo.android.domain.Message;
 import com.guesswoo.android.fragment.MainFragment_;
 import com.guesswoo.android.helper.database.GuessWooDatabaseHelper;
@@ -48,6 +49,7 @@ public class GameActivity extends AppCompatActivity {
 
     private MessageAdapter messageAdapter;
 
+    private Game game;
     private String gameId;
     private String username;
 
@@ -60,8 +62,9 @@ public class GameActivity extends AppCompatActivity {
     protected void init() {
 
         Bundle bundle = getIntent().getExtras();
-        gameId = bundle.getString(MainFragment_.GAME);
-        username = bundle.getString(MainFragment_.USERNAME);
+        game = (Game) bundle.get(MainFragment_.GAME);
+        gameId = game.getId();
+        username = game.getUsername();
 
         getSupportActionBar().setTitle(username);
 
@@ -70,7 +73,7 @@ public class GameActivity extends AppCompatActivity {
 
         try {
             messageAdapter = new MessageAdapter(this, R.layout.listview_message_row, messageDao.queryForEq
-                    ("gameId", gameId));
+                    ("gameId", gameId), game);
             lvMessages.setAdapter(messageAdapter);
         } catch (SQLException e) {
             Log.e(GameActivity.class.getName(), "Can't retrieve messages data", e);

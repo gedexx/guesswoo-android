@@ -15,7 +15,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.util.Calendar;
-import java.util.Random;
 
 public class GuessWooDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
@@ -72,7 +71,7 @@ public class GuessWooDatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
 
-    private void insertDummyGames() {
+    /*private void insertDummyGames() {
 
         try {
             for (int i = 0; i < 20; i++) {
@@ -85,7 +84,7 @@ public class GuessWooDatabaseHelper extends OrmLiteSqliteOpenHelper {
             Log.e(GuessWooDatabaseHelper.class.getName(), "Can't insert games", e);
             throw new RuntimeException(e);
         }
-    }
+    }*/
 
     private void insertDummyMessages() {
 

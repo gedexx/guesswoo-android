@@ -2,7 +2,11 @@ package com.guesswoo.android.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +18,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.guesswoo.android.R;
+import com.guesswoo.android.domain.Game;
 import com.guesswoo.android.domain.Message;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 public class MessageAdapter extends ArrayAdapter<Message> {
@@ -23,12 +29,14 @@ public class MessageAdapter extends ArrayAdapter<Message> {
     private Context context;
     private int layoutResourceId;
     private final List<Message> messages;
+    private final Game game;
 
-    public MessageAdapter(Context context, int layoutResourceId, List<Message> messages) {
+    public MessageAdapter(Context context, int layoutResourceId, List<Message> messages, Game game) {
         super(context, layoutResourceId, messages);
         this.context = context;
         this.layoutResourceId = layoutResourceId;
         this.messages = messages;
+        this.game = game;
     }
 
     @Override
@@ -82,6 +90,18 @@ public class MessageAdapter extends ArrayAdapter<Message> {
             layoutParams = (LinearLayout.LayoutParams) messageHolder.tvDateTime.getLayoutParams();
             layoutParams.gravity = Gravity.RIGHT;
             messageHolder.tvDateTime.setLayoutParams(layoutParams);
+
+            try {
+                Bitmap photo = BitmapFactory.decodeStream(getContext().openFileInput(game.getInitialPhoto()));
+                RoundedBitmapDrawable circularPhoto =
+                        RoundedBitmapDrawableFactory.create(getContext().getResources(), photo);
+                circularPhoto.setCornerRadius(photo.getWidth());
+
+                messageHolder.ivProfileRight.setImageDrawable(circularPhoto);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
         } else {
 
             messageHolder.llBackground.setBackgroundResource(R.drawable.abc_dialog_material_background_dark);
@@ -108,6 +128,18 @@ public class MessageAdapter extends ArrayAdapter<Message> {
             layoutParams = (LinearLayout.LayoutParams) messageHolder.tvDateTime.getLayoutParams();
             layoutParams.gravity = Gravity.LEFT;
             messageHolder.tvDateTime.setLayoutParams(layoutParams);
+
+            try {
+                Bitmap photo = BitmapFactory.decodeStream(getContext().openFileInput(game.getBoard().get(0).getPhoto
+                        ()));
+                RoundedBitmapDrawable circularPhoto =
+                        RoundedBitmapDrawableFactory.create(getContext().getResources(), photo);
+                circularPhoto.setCornerRadius(photo.getWidth());
+
+                messageHolder.ivProfileLeft.setImageDrawable(circularPhoto);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
 
         messageHolder.tvBody.setText(message.getBody());

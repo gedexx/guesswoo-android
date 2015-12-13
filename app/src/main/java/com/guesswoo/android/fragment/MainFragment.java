@@ -35,7 +35,6 @@ import java.text.DateFormat;
 public class MainFragment extends Fragment {
 
     public static final String GAME = "game";
-    public static final String USERNAME = "username";
 
     @App
     GuessWooApplication application;
@@ -110,8 +109,9 @@ public class MainFragment extends Fragment {
         }
 
         Intent gameIntent = new Intent(getActivity(), GameActivity_.class);
-        gameIntent.putExtra(GAME, selectedGame.getId());
-        gameIntent.putExtra(USERNAME, selectedGame.getUsername());
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(GAME, selectedGame);
+        gameIntent.putExtras(bundle);
 
         startActivity(gameIntent);
     }

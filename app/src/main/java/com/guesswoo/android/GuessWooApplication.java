@@ -4,6 +4,7 @@ import android.app.Application;
 import android.app.NotificationManager;
 
 import com.guesswoo.android.service.rest.GameService;
+import com.guesswoo.android.service.rest.PhotoService;
 import com.guesswoo.android.service.rest.UserService;
 
 import org.androidannotations.annotations.EApplication;
@@ -31,6 +32,9 @@ public class GuessWooApplication extends Application {
     @RestService
     UserService userService;
 
+    @RestService
+    PhotoService photoService;
+
     public String getConnectedUsername() {
         return connectedUsername;
     }
@@ -49,5 +53,9 @@ public class GuessWooApplication extends Application {
 
     public UserService getUserService() {
         return userService;
+    }
+
+    public PhotoService getPhotoService() {
+        return photoService;
     }
 }

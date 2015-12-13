@@ -4,7 +4,10 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.text.TextUtils;
@@ -33,9 +36,11 @@ import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.springframework.core.NestedRuntimeException;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.io.FileOutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,29 +54,21 @@ public class LoginActivity extends Activity {
 
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
-
-    @App
-    GuessWooApplication application;
-
     @ViewById(R.id.tvLblGuessWoo)
     protected TextView tvLblGuessWoo;
-
     @ViewById(R.id.user)
     protected AutoCompleteTextView mUserView;
-
     @ViewById(R.id.password)
     protected EditText mPasswordView;
-
     @ViewById(R.id.login_progress)
     protected View mProgressView;
-
     @ViewById(R.id.login_form)
     protected View mLoginFormView;
-
     protected GuessWooDatabaseHelper guessWooDatabaseHelper;
-
     @OrmLiteDao(helper = GuessWooDatabaseHelper.class)
     protected Dao<Game, String> gameDao;
+    @App
+    GuessWooApplication application;
 
     @AfterViews
     protected void init() {
@@ -190,7 +187,7 @@ public class LoginActivity extends Activity {
         TokenResponse tokenResponse;
         try {
             // Construction des paramètres à passer au login
-            MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+            final MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
             formData.set(USERNAME, username);
             formData.set(PASSWORD, password);
 
@@ -207,10 +204,37 @@ public class LoginActivity extends Activity {
 
             List<Game> games = new ArrayList<>();
             try {
+
                 application.getGameService().setHeader(GuessWooApplication.X_TOKEN, tokenResponse.getToken());
                 for (GameResponse gameResponse : application.getGameService().getGames()) {
-                    Game game = new Game(gameResponse.getId(), gameResponse.getUsername(), gameResponse.getDate(),
-                            gameResponse.getInitialPhoto(), gameResponse.getActivePhotos());
+
+                    final Game game = new Game();
+                    game.setId(gameResponse.getId());
+                    game.setUsername(gameResponse.getUsername());
+                    game.setDate(gameResponse.getDate());
+                    game.setInitialPhoto(gameResponse.getInitialPhoto());
+
+                    try {
+                        final String initialPhotoNameFile = game.getInitialPhoto();
+                        final FileOutputStream fos = openFileOutput(initialPhotoNameFile, Context.MODE_PRIVATE);
+
+                        // Use the compress method on the BitMap object to write image to the OutputStream
+                        final Bitmap bitmapImage = BitmapFactory.decodeStream(application.getPhotoService().getThumbnail
+                                (initialPhotoNameFile).getInputStream());
+                        bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+
+                        fos.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    game.setActivePhotos(gameResponse.getActivePhotos());
+                    game.setAuthor(gameResponse.getAuthor());
+                    game.setConnected(gameResponse.getConnected());
+                    game.setLastMessage(constructLastMessage(gameResponse.getLastMessage()));
+                    game.setUnreadMessagesCount(gameResponse.getUnreadMessagesCount());
+                    game.setBoard(constructBoard(gameResponse.getBoard()));
+
                     games.add(game);
                 }
             } catch (NestedRuntimeException e) {
@@ -232,6 +256,53 @@ public class LoginActivity extends Activity {
         }
 
         showProgress(false);
+    }
+
+    private Game.LastMessage constructLastMessage(GameResponse.LastMessage gameResponseLastMessage) {
+
+        final Game.LastMessage lastMessage = new Game.LastMessage();
+
+        if (gameResponseLastMessage != null) {
+            lastMessage.setUsername(gameResponseLastMessage.getUsername());
+            lastMessage.setDate(gameResponseLastMessage.getDate());
+            lastMessage.setContent(gameResponseLastMessage.getContent());
+        }
+
+        return lastMessage;
+    }
+
+    private ArrayList<Game.Photo> constructBoard(List<GameResponse.Photo> gameResponseBoard) {
+
+        final ArrayList<Game.Photo> board = new ArrayList<>();
+
+        if (!CollectionUtils.isEmpty(gameResponseBoard)) {
+
+            for (GameResponse.Photo gameResponsePhoto : gameResponseBoard) {
+
+                final Game.Photo photo = new Game.Photo();
+                photo.setPhoto(gameResponsePhoto.getPhoto());
+                photo.setExcluded(gameResponsePhoto.getExcluded());
+
+                try {
+                    final String photoNameFile = photo.getPhoto();
+
+                    final FileOutputStream fos = openFileOutput(photoNameFile, Context.MODE_PRIVATE);
+
+                    // Use the compress method on the BitMap object to write image to the OutputStream
+                    final Bitmap bitmapImage = BitmapFactory.decodeStream(application.getPhotoService().getThumbnail
+                            (photoNameFile).getInputStream());
+                    bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+
+                    fos.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                board.add(photo);
+            }
+        }
+
+        return board;
     }
 
 }
